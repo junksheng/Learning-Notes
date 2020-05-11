@@ -89,3 +89,60 @@ adc1a90446a667785ab856e342e31506b90b285c (HEAD -> master) Learn the Git about Li
 
 
 
+`$ git reset --hard HEAD^`回退到上一个版本
+
+```shell
+$ git add .
+
+$ git commit -m "版本回退尝试"
+[master d659bf7] 版本回退尝试
+ 1 file changed, 38 insertions(+), 1 deletion(-)
+ 
+$ git add .
+
+$ git commit -m "废弃的版本"
+[master a037a10] 废弃的版本
+ 1 file changed, 2 insertions(+)
+ 
+$ git reset --hard HEAD^
+HEAD is now at d659bf7 版本回退尝试
+```
+
+使用命令`$ git reset --hard HEAD^`可以看到确实从 "废弃的版本" 回退到了 "回退版本尝试". 
+
+
+
+运行`git log --pretty=oneline`发现废弃版本不见了.
+
+```shell
+$ git log --pretty=oneline
+d659bf7378afc82532cf5474f8fa774bd2fdbdbb (HEAD -> master) 版本回退尝试
+adc1a90446a667785ab856e342e31506b90b285c Learn the Git about Liaoxvefeng in 版本回退
+16cbbfdbe70091fe011bac8970b00fb992151d14 Learn the Git about Liaoxvefeng
+2e4ba41d528c453cdd4883c5480d194cc6f92580 the git init
+```
+
+
+
+"废弃的版本"找不到了, 当如果你没有关闭当前命令行, 你可以找到"废弃的版本"的版本号`commit id`, 使用`git reset --hard 1904a(commit id)`去恢复它, 版本号没必要写全, Git会自动去找. 
+
+
+
+我特么, 提交了"废弃的版本"没有查看版本号...所以不能恢复了...
+
+但我会就这样放弃吗? 不可能的.
+
+通过命令`git reflog`可以看到你的`head`指针指过的版本号.
+
+```shell
+$ git reflog
+d659bf7 (HEAD -> master) HEAD@{0}: reset: moving to HEAD^
+a037a10 HEAD@{1}: commit: 废弃的版本
+d659bf7 (HEAD -> master) HEAD@{2}: commit: 版本回退尝试
+adc1a90 HEAD@{3}: commit: Learn the Git about Liaoxvefeng in 版本回退
+16cbbfd HEAD@{4}: commit: Learn the Git about Liaoxvefeng
+2e4ba41 HEAD@{5}: commit (initial): the git init
+```
+
+这不就有了吗??? 哈哈哈, 但我还是不想回退, 因为我记了笔记了, 麻烦...
+
