@@ -52,3 +52,40 @@ Changes not staged for commit:
 
 
 不断地对文件进行修改, 然后不断提交到版本库里, 就像游戏存档. 
+
+随着时间地推移, 我们已经记不住我们修改地版本有哪些, 这时候可以使用`git log`命令查看. 
+
+```shell
+$ git log
+commit adc1a90446a667785ab856e342e31506b90b285c (HEAD -> master)
+Author: junksheng <junk.sheng@foxmail.com>
+Date:   Mon May 11 20:14:17 2020 +0800
+
+    Learn the Git about Liaoxvefeng in 版本回退
+
+commit 16cbbfdbe70091fe011bac8970b00fb992151d14
+Author: junksheng <junk.sheng@foxmail.com>
+Date:   Mon May 11 20:05:10 2020 +0800
+
+    Learn the Git about Liaoxvefeng
+
+commit 2e4ba41d528c453cdd4883c5480d194cc6f92580
+Author: junksheng <junk.sheng@foxmail.com>
+Date:   Mon May 11 19:55:27 2020 +0800
+
+    the git init
+```
+
+`git log` 命令显示从最近到最远的提交日志, 如果嫌输出信息太多, 看得眼花缭乱的, 可以试试加上`--pretty=oneline`参数: 
+
+```shell
+$ git log --pretty=oneline
+adc1a90446a667785ab856e342e31506b90b285c (HEAD -> master) Learn the Git about Liaoxvefeng in 版本回退
+16cbbfdbe70091fe011bac8970b00fb992151d14 Learn the Git about Liaoxvefeng
+2e4ba41d528c453cdd4883c5480d194cc6f92580 the git init
+```
+
+会显示每一次的 `版本号+commit说明`. 
+
+
+
