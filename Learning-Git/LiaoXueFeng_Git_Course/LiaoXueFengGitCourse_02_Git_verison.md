@@ -6,11 +6,7 @@ summary: 廖雪峰Git教程 第二章	时光穿梭机
 
 
 
-[时光穿梭机](https://www.liaoxuefeng.com/wiki/896043488029600/896954074659008)
-
-
-
-### 时光机穿梭
+### [时光穿梭机](https://www.liaoxuefeng.com/wiki/896043488029600/896954074659008)
 
 `git status`可以让我们时刻掌握仓库当前状态. 比如我更改了这个文件. 
 
@@ -41,3 +37,18 @@ Changes not staged for commit:
 
 
 然后用`git add`命令提交到缓冲区, 再使用`git commit`命令提交就好了. 
+
+
+
+#### 小结
+
++ 要随时掌握工作区的状态, 使用`git status`命令. 
++ 如果`git status`告诉你有文件被修改过, 用`git diff`可以查看修改内容. 
+
+
+
+### [版本回退](https://www.liaoxuefeng.com/wiki/896043488029600/897013573512192)
+
+
+
+不断地对文件进行修改, 然后不断提交到版本库里, 就像游戏存档. 
