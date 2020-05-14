@@ -88,11 +88,87 @@ $ git commit -m "branch test"
 
 
 
-	4. 切回`master`分支: 
+4. 切回`master`分支: 
 
 ```shell
 $ git checkout master
 Switched to branch 'master'
 ```
 
-​		切换回`master`分支后，再查看一个`readme.txt`文件，刚才添加的内容不见了！因为那个提交是在`dev`分支上，而`master`分支此刻的提交点并没有变：
+​	   切换回`master`分支后，再查看一个`readme.txt`文件，刚才添加的内容不见了！因为那个提交是在`dev`分支上，而`master`分支此刻的提交点并没有变：
+
+![image-20200514200107487](LiaoXueFengGitCourse_04_Git_ManageBranch/image-20200514200107487.png)
+
+
+
+5. 合并`dev`分支到`master`分支上: 
+
+```shell
+$ git merge dev
+Updating 0d43254..7bd6a31
+Fast-forward
+ ...xx.md      | 41 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
+```
+
+​		`git merge`命令用于合并指定分支到当前分支。合并后，再查看改动的内容，就可以看到，和`dev`分支的最新提交是完全一样的。
+
+
+
+6. 合并后, 可以删除掉`dev`分支: 
+
+```shell
+$ git branch -d dev
+Deleted branch dev (was b17d20e).
+```
+
+
+
+7. 使用`git branch`, 只剩`master`分支: 
+
+```shell
+$ git branch
+* master
+```
+
+​		因为创建、合并和删除分支非常快，所以Git鼓励你使用分支完成某个任务，合并后再删掉分支，这和直接在`master`分支上工作效果是一样的，但过程更安全。
+
+
+
+**switch**
+
+我们注意到切换分支使用`git checkout `，而前面讲过的撤销修改则是`git checkout -- `，同一个命令，有两种作用，确实有点令人迷惑。
+
+实际上，切换分支这个动作，用`switch`更科学。因此，最新版本的Git提供了新的`git switch`命令来切换分支：
+
+创建并切换到新的`dev`分支，可以使用：
+
+```shell
+$ git switch -c dev
+```
+
+直接切换到已有的`master`分支，可以使用：
+
+```shell
+$ git switch master
+```
+
+使用新的`git switch`命令，比`git checkout`要更容易理解
+
+
+
+##### 小结
+
+Git鼓励大量使用分支：
+
+查看分支：`git branch`
+
+创建分支：`git branch <name> `
+
+切换分支：`git checkout <name>`或者`git switch <name> `
+
+创建+切换分支：`git checkout -b <name> `或者`git switch -c <name> `
+
+合并某分支到当前分支：`git merge <name> `
+
+删除分支：`git branch -d <name> `
