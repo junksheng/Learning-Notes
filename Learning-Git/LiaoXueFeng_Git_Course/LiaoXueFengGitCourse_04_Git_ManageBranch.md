@@ -82,7 +82,17 @@ $ git branch
 ```shell
 $ git add readme.txt 
 $ git commit -m "branch test"
-[dev b17d20e] branch test
- 1 file changed, 1 insertion(+)
+[dev 4dc3a6b] branch test
+ 1 file changed, 31 insertions(+)
 ```
 
+
+
+	4. 切回`master`分支: 
+
+```shell
+$ git checkout master
+Switched to branch 'master'
+```
+
+​		切换回`master`分支后，再查看一个`readme.txt`文件，刚才添加的内容不见了！因为那个提交是在`dev`分支上，而`master`分支此刻的提交点并没有变：
