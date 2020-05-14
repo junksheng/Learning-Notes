@@ -55,3 +55,34 @@ $ git checkout -b dev
 Switched to a new branch 'dev'
 ```
 
+​		`git checkout`命令加上`-b`参数表示创建并切换, 相当于以下两条命令: 
+
+```shell
+$ git branch dev
+$ git checkout dev
+Switched to branch 'dev'
+```
+
+
+
+2. 然后, `git branch`可以查看当前分支: 
+
+```shell
+$ git branch
+* dev
+  master
+```
+
+​		当前分支前面会标一个`*`号. 
+
+
+
+3. 修改文件, 然后提交. 
+
+```shell
+$ git add readme.txt 
+$ git commit -m "branch test"
+[dev b17d20e] branch test
+ 1 file changed, 1 insertion(+)
+```
+
