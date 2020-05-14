@@ -92,3 +92,29 @@ $ git push origin master
 此后，每次本地提交后，只要有必要，就可以使用命令`git push origin master`推送最新修改；
 
 分布式版本系统的最大好处之一是在本地工作完全不需要考虑远程库的存在，也就是有没有联网都可以正常工作，而SVN在没有联网的时候是拒绝干活的！当有网络的时候，再把本地提交推送一下就完成了同步，真是太方便了！
+
+
+
+
+
+### [从远程库克隆](https://www.liaoxuefeng.com/wiki/896043488029600/898732792973664)
+
+使用命令`git clone`克隆一个本地库:
+
+```shell
+$ git clone git@github.com:michaelliao/gitskills.git
+Cloning into 'gitskills'...
+remote: Counting objects: 3, done.
+remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 3
+Receiving objects: 100% (3/3), done.
+```
+
+当然, 也可以使用`https`, 但速度比较慢, 而且每次推送都必须输入口令, 但是在某些只开放http端口的公司内部就无法使用`ssh`协议而只能用`https`。
+
+
+
+#### 小结
+
+要克隆一个仓库，首先必须知道仓库的地址，然后使用`git clone`命令克隆。
+
+Git支持多种协议，包括`https`，但`ssh`协议速度最快。
