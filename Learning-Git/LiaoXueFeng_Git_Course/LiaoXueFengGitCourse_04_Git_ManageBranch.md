@@ -172,3 +172,321 @@ Git鼓励大量使用分支：
 合并某分支到当前分支：`git merge <name> `
 
 删除分支：`git branch -d <name> `
+
+
+
+#### [解决冲突](https://www.liaoxuefeng.com/wiki/896043488029600/900004111093344#0)
+
+新建分支`feature1`
+
+```shell
+$ git switch -c feature1
+Switched to a new branch 'feature1'
+```
+
+
+
+如果在`feature1`分支上修改文件, 并提交
+
+```shell
+$ git add .
+$ git commit -m "modified feature1"
+```
+
+
+
+切换回`master`分支, 并且修改文件
+
+```shell
+$ git switch master
+# 修改repo文件
+$ git add . 
+$ git commit -m "modified master"
+```
+
+
+
+现在, `master`分支和`feature1`分支各自分别有新的提交:
+
+![image-20200516182559981](LiaoXueFengGitCourse_04_Git_ManageBranch/image-20200516182559981.png)
+
+
+
+现在尝试合并两个分支:
+
+```shell
+$ git merge feature1
+Auto-merging readme.txt
+CONFLICT (content): Merge conflict in readme.txt
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+**Automatic merge failed**, 合并冲突了, Git的快速合并没有成功, 并告诉我们`readme.md`存在冲突, 必须修改冲突再提交. 
+
+
+
+使用`git status`会更清晰
+
+```shell
+$ git status
+On branch master
+Your branch is ahead of 'origin/master' by 2 commits.
+  (use "git push" to publish your local commits)
+
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge) #使用该命令将中止合并
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+
+	both modified:   readme.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+
+
+直接查看`readme.txt`的内容, 用什么查看都行, `<<<, ===, >>>`这些是`Git`帮忙填充的: 
+
+```
+Git is a distributed version control system.
+Git is free software distributed under the GPL.
+Git has a mutable index called stage.
+Git tracks changes of files.
+<<<<<<< HEAD
+Creating a new branch is quick & simple.
+=======
+Creating a new branch is quick AND simple.
+>>>>>>> feature1
+```
+
+Git用`<<<<<<<`，`=======`，`>>>>>>>`标记出不同分支的内容，我们把`Git`的符号和冲突语句修改如下后保存：
+
+```
+Creating a new branch is quick and simple.
+```
+
+
+
+再提交: 
+
+```shell
+$ git add .
+$ git commit -m "conflict fixed"
+```
+
+![image-20200516183423287](LiaoXueFengGitCourse_04_Git_ManageBranch/image-20200516183423287.png)
+
+
+
+用带参数的`git log`也可以看到分支的合并情况：
+
+```shell
+$ git log --graph --pretty=oneline --abbrev-commit
+*   cf810e4 (HEAD -> master) conflict fixed
+|\  
+| * 14096d0 (feature1) AND simple
+* | 5dc6824 & simple
+|/  
+* b17d20e branch test
+* d46f35e (origin/master) remove test.txt
+* b84166e add test.txt
+* 519219b git tracks changes
+* e43a48b understand how stage works
+* 1094adb append GPL
+* e475afc add distributed
+* eaadf4e wrote a readme file
+```
+
+
+
+最后, 删除`feature1`分支: 
+
+```shell
+$ git branch -d feature1
+Deleted branch feature1 (was 14096d0).
+```
+
+
+
+##### 小结
+
+当Git无法自动合并分支时, 就必须首先解决冲突. 解决冲突后, 再提交, 合并完成. 
+
+解决冲突就是把Git合并失败的文件**手动编辑**为我们希望的内容，再提交。
+
+用`git log --graph`命令可以看到分支合并图。
+
+
+
+#### [分支管理策略](https://www.liaoxuefeng.com/wiki/896043488029600/900005860592480#0)
+
+通常，合并分支时，如果可能，Git会用`Fast forward`模式，但这种模式下，删除分支后，会丢掉分支信息。
+
+如果要强制禁用`Fast forward`模式，Git就会在merge时生成一个新的commit，这样，从分支历史上就可以看出分支信息。
+
+下面我们实战一下`--no-ff`方式的`git merge`：
+
+首先，仍然创建并切换`dev`分支：
+
+```shell
+$ git switch -c dev
+Switched to a new branch 'dev'
+```
+
+修改readme.txt文件，并提交一个新的commit：
+
+```shell
+$ git add readme.txt 
+$ git commit -m "add merge"
+[dev f52c633] add merge
+ 1 file changed, 1 insertion(+)
+```
+
+现在，我们切换回`master`：
+
+```shell
+$ git switch master
+Switched to branch 'master'
+```
+
+准备合并`dev`分支，请注意`--no-ff`参数，表示禁用`Fast forward`：
+
+```shell
+$ git merge --no-ff -m "merge with no-ff" dev
+Merge made by the 'recursive' strategy.
+ readme.txt | 1 +
+ 1 file changed, 1 insertion(+)
+```
+
+因为本次合并要创建一个新的commit，所以加上`-m`参数，把commit描述写进去。
+
+合并后，我们用`git log`看看分支历史：
+
+```shell
+$ git log --graph --pretty=oneline --abbrev-commit
+*   e1e9c68 (HEAD -> master) merge with no-ff
+|\  
+| * f52c633 (dev) add merge
+|/  
+*   cf810e4 conflict fixed
+...
+```
+
+可以看到，不使用`Fast forward`模式，merge后就像这样：
+
+![image-20200516193849986](LiaoXueFengGitCourse_04_Git_ManageBranch/image-20200516193849986.png)
+
+##### 分支策略
+
+在实际开发中，我们应该按照几个基本原则进行分支管理：
+
+首先，`master`分支应该是非常稳定的，也就是仅用来发布新版本，平时不能在上面干活；
+
+那在哪干活呢？干活都在`dev`分支上，也就是说，`dev`分支是不稳定的，到某个时候，比如1.0版本发布时，再把`dev`分支合并到`master`上，在`master`分支发布1.0版本；
+
+你和你的小伙伴们每个人都在`dev`分支上干活，每个人都有自己的分支，时不时地往`dev`分支上合并就可以了。
+
+所以，团队合作的分支看起来就像这样：
+
+![image-20200516194004356](LiaoXueFengGitCourse_04_Git_ManageBranch/image-20200516194004356.png)
+
+##### 小结
+
+Git分支十分强大，在团队开发中应该充分应用。
+
+合并分支时，加上`--no-ff`参数就可以用普通模式合并，合并后的历史有分支，能看出来曾经做过合并，而`fast forward`合并就看不出来曾经做过合并。
+
+
+
+### [Bug分支](https://www.liaoxuefeng.com/wiki/896043488029600/900388704535136)
+
+遇到bug了, 你希望创建一个分支`issue-101`来修复它, 但是, 你的`dev`分支上的工作还没提交, 而且你还没完成, 还没法提交, 预计完成还需要一天时间. 但bug需要在两小时内修复. 
+
+Git 提供了一个`stash`功能, 可以把当前的工作现场存起来, 等以后再恢复工作
+
+```shell
+$ git stash
+Saved working directory and index state WIP on dev: f52c633 add merge
+```
+
+
+
+用`git status`查看工作区, 发现很干净. 
+
+然后你决定再哪个分支修复bug, 假定再`master`分支上修复, 就从`master`创建临时分支: 
+
+```shell
+$ git checkout master
+$ git checkout -b issue-101
+```
+
+
+
+修复bug, 然后提交: 
+
+```shell
+$ git add .
+$ git commit -m "fix bug 101"
+```
+
+
+
+切换到`master`, 完成合并, 并删除`issue-101`分支: 
+
+```shell
+$ git switch master
+$ git merge -no-ff -m "merge bug fix 101" issue-101
+$ git branch -d issue-101
+```
+
+
+
+bug 修改完成, 换回`dev`分支干活: 
+
+```shell
+$ git switch dev
+$ git status
+On branch dev
+nothing to commit, working tree clean
+```
+
+发现`dev`空空如也, 因为上面用`git stash`把内容藏起来了. 
+
+你可以用两个方法恢复: 
+
+一是用`git stash apply`恢复，但是恢复后，stash内容并不删除，你需要用`git stash drop`来删除；
+
+另一种方式是用`git stash pop`，恢复的同时把stash内容也删了：
+
+另一种方式是用`git stash pop`，恢复的同时把stash内容也删了：
+
+```shell
+$ git stash pop
+On branch dev
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:   hello.py
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   readme.txt
+
+Dropped refs/stash@{0} (5d677e2ee266f39ea296182fb2354265b91b3b2a)
+```
+
+再用`git stash list`查看，就看不到任何stash内容了：
+
+```shell
+$ git stash list
+```
+
+你可以多次stash，恢复的时候，先用`git stash list`查看，然后恢复指定的stash，用命令：
+
+```shell
+$ git stash apply stash@{0}
+```
