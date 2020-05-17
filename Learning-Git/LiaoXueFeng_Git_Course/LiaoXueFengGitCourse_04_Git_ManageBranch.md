@@ -400,7 +400,7 @@ Git分支十分强大，在团队开发中应该充分应用。
 
 
 
-### [Bug分支](https://www.liaoxuefeng.com/wiki/896043488029600/900388704535136)
+#### [Bug分支](https://www.liaoxuefeng.com/wiki/896043488029600/900388704535136)
 
 遇到bug了, 你希望创建一个分支`issue-101`来修复它, 但是, 你的`dev`分支上的工作还没提交, 而且你还没完成, 还没法提交, 预计完成还需要一天时间. 但bug需要在两小时内修复. 
 
@@ -490,3 +490,107 @@ $ git stash list
 ```shell
 $ git stash apply stash@{0}
 ```
+
+
+
+在master分支修复bug, 那dev分支也有bug. 为了方便修改, Git专门提供了`cherry-pick`命令, 用于复制一个特定的提交到当前分支: 
+
+```shell
+$ git branch
+* dev
+  master
+$ git cherry-pick 4c805e2
+[master 1d4b803] fix bug 101
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+```
+
+`4c805e2`是上次修改bug提交的ID. 
+
+
+
+##### 小结
+
+修复bug时，我们会通过创建新的bug分支进行修复，然后合并，最后删除；
+
+当手头工作没有完成时，先把工作现场`git stash`一下，然后去修复bug，修复后，再`git stash pop`，回到工作现场；
+
+在master分支上修复的bug，想要合并到当前dev分支，可以用`git cherry-pick `命令，把bug提交的修改“复制”到当前分支，避免重复劳动。
+
+
+
+#### [Feature分支](https://www.liaoxuefeng.com/wiki/896043488029600/900394246995648)
+
+添加一个新功能时，你肯定不希望因为一些实验性质的代码，把主分支或者`dev`分支搞乱了，所以，每添加一个新功能，最好新建一个feature分支，在上面开发，完成后，合并，最后，删除该feature分支。
+
+
+
+现在，你终于接到了一个新任务：开发代号为Vulcan的新功能，该功能计划用于下一代星际飞船。
+
+于是准备开发：
+
+```shell
+$ git switch -c feature-vulcan
+Switched to a new branch 'feature-vulcan'
+```
+
+5分钟后，开发完毕：
+
+```shell
+$ git add vulcan.py
+
+$ git status
+On branch feature-vulcan
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:   vulcan.py
+
+$ git commit -m "add feature vulcan"
+[feature-vulcan 287773e] add feature vulcan
+ 1 file changed, 2 insertions(+)
+ create mode 100644 vulcan.py
+```
+
+切回`dev`，准备合并：
+
+```shell
+$ git switch dev
+```
+
+一切顺利的话，feature分支和bug分支是类似的，合并，然后删除。
+
+但是！
+
+就在此时，接到上级命令，因经费不足，新功能必须取消！
+
+虽然白干了，但是这个包含机密资料的分支还是必须就地销毁：
+
+```shell
+$ git branch -d feature-vulcan
+error: The branch 'feature-vulcan' is not fully merged.
+If you are sure you want to delete it, run 'git branch -D feature-vulcan'.
+```
+
+销毁失败。Git友情提醒，`feature-vulcan`分支还没有被合并，如果删除，将丢失掉修改，如果要强行删除，需要使用大写的`-D`参数。。
+
+现在我们强行删除：
+
+```shell
+$ git branch -D feature-vulcan
+Deleted branch feature-vulcan (was 287773e).
+```
+
+终于删除成功！
+
+
+
+##### 小结
+
+开发一个新feature，最好新建一个分支；
+
+如果要丢弃一个没有被合并过的分支，可以通过`git branch -D `强行删除。
+
+
+
+#### [多人协作](https://www.liaoxuefeng.com/wiki/896043488029600/900375748016320)
+
