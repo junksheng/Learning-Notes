@@ -594,3 +594,51 @@ Deleted branch feature-vulcan (was 287773e).
 
 #### [多人协作](https://www.liaoxuefeng.com/wiki/896043488029600/900375748016320)
 
+查看远程库信息, 用`git remote`:
+
+```shell
+$ git remote
+origin
+```
+
+或者, 用`git remote -v`显示更详细信息: 
+
+```shell
+$ git remote -v
+origin  git@github.com:michaelliao/learngit.git (fetch)
+origin  git@github.com:michaelliao/learngit.git (push)
+```
+
+`fetch`是可以抓取的`origin`的地址, `push`是可以推送的`origin`地址. 如果没有推送权限, 就看不到`push`的地址. 
+
+
+
+##### 推送分支
+
+把该分支上的所有本地提交推送到远程库. 推送时, 指定远程分支, 和本地分支. 
+
+```shell
+$ git push origin master
+```
+
+如果要推送其他分支, 比如`dev`, 就改成: 
+
+```shell
+$ git push origin dev
+```
+
+
+
+哪些分支需要推送, 哪些不需要?
+
++ `master`分支是主分支, 要时刻与远程同步;
++ `dev`分支是开发分支, 团队所有成员都需要在上面工作, 所以也需要与远程同步. 
++ `bug`分支用于本地修改bug, 没必要推送到远程了. 
++ `feature`分支是功能分支, 是否推送取决于该功能你有没有和你的小伙伴合作开发该功能. 
+
+
+
+##### 抓取分支
+
+
+
