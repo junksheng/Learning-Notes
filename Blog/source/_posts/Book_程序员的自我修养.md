@@ -4,7 +4,7 @@ date: 2020-05-11 18:05:53
 author: JunkSheng
 img: /images/chengxvyuandeziwoxiuyang.jpg
 top: true
-cover: true
+cover: false
 coverImg: /images/chengxvyuandeziwoxiuyang.jpg
 toc: false
 mathjax: false
