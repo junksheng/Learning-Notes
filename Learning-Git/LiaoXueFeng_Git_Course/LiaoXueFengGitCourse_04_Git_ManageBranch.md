@@ -640,5 +640,142 @@ $ git push origin dev
 
 ##### 抓取分支
 
+现在你要参与一个新项目, 你从另一台电脑克隆一个项目过来(注意要把SSH Key添加到GitHub). 
+
+```shell
+$ git clone git@github.com:username/reponame.git
+Cloning into 'learngit'...
+remote: Counting objects: 40, done.
+remote: Compressing objects: 100% (21/21), done.
+remote: Total 40 (delta 14), reused 40 (delta 14), pack-reused 0
+Receiving objects: 100% (40/40), done.
+Resolving deltas: 100% (14/14), done.
+```
+
+你从远程库clone时, 默认情况下只能看到本地的`master`分支. 可以用`git branch`命令查看: 
+
+```shell
+$ git branch
+* master
+```
+
+现在, 你要在`dev`分支上开发, 就必须创建**远程**的`origin`的`dev`分支到本地, 你可以使用如下命令: 
+
+```shell
+$ git checkout -b dev origin/dev
+```
+
+在`dev`上修改, 然后把`dev`分支`push`到远程: 
+
+```shell
+$ git add .
+$ git commit -m "add env"
+$ git push origin dev
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 308 bytes | 308.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To github.com:michaelliao/learngit.git
+   f52c633..7a5e5dd  dev -> dev
+```
+
+
+
+你向`origin/dev`分支推送了提交, 你的小伙伴也对同样的修改, 并视图推送: 
+
+```shell
+$ cat env.txt
+env
+
+$ git add env.txt
+
+$ git commit -m "add new env"
+[dev 7bd91f1] add new env
+ 1 file changed, 1 insertion(+)
+ create mode 100644 env.txt
+
+$ git push origin dev
+To github.com:michaelliao/learngit.git
+ ! [rejected]        dev -> dev (non-fast-forward)
+error: failed to push some refs to 'git@github.com:michaelliao/learngit.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Integrate the remote changes (e.g.
+hint: 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+```
+
+推送失败, 因为最新提交与你小伙伴试图推送的提交有冲突. 
+
+Git提示我们, 先用`git pull`把最新的提交从`origin/dev`抓下来, 然后在本地合并, 解决冲突, 再推送: 
+
+```shell
+$ git pull
+There is no tracking information for the current branch.
+Please specify which branch you want to merge with.
+See git-pull(1) for details.
+
+    git pull <remote> <branch>
+
+If you wish to set tracking information for this branch you can do so with:
+
+    git branch --set-upstream-to=origin/<branch> dev
+```
+
+`git pull`失败, 因为没有指定本地`dev`与远程`origin/dev`分支的链接. 
+
+```shell
+$ git branch --set-upstream-to=origin/dev dev
+```
+
+
+
+再`pull`:
+
+```shell
+$ git pull
+Auto-merging env.txt
+CONFLICT (add/add): Merge conflict in env.txt
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+`pull`成功, 但自动合并失败, 需要你手动解决冲突, 解决后, 提交, 再push: 
+
+```shell
+$ git commit -m "fix env conflict"
+[dev 57c53ab] fix env conflict
+
+$ git push origin dev
+Counting objects: 6, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (6/6), 621 bytes | 621.00 KiB/s, done.
+Total 6 (delta 0), reused 0 (delta 0)
+To github.com:michaelliao/learngit.git
+   7a5e5dd..57c53ab  dev -> dev
+```
+
+
+
+多人协作的工作模式: 
+
+1. 你试图`git push origin <branch-name>`推送自己的修改
+2. 推送失败, 则因为远程分支比你本地版本新, 需要先用`git pull`试图合并;
+3. 如果合并有冲突, 则解决冲突, 并在本地提交`git commit`;
+4. 没有冲突或者解决掉冲突后, 再用`git push origin <branch-name>`推送就能成功! 
+
+如果`git pull`提示`no tracking information`, 说明本地分支和远程分支的链接关系没有创建, 用命令`git branch --set-upstream-to =origin/<branch> <branch-name>`
+
+
+
+##### 小结
+
+- 查看远程库信息，使用`git remote -v`；
+- 本地新建的分支如果不推送到远程，对其他人就是不可见的；
+- 从本地推送分支，使用`git push origin branch-name`，如果推送失败，先用`git pull`抓取远程的新提交；
+- 在本地创建和远程分支对应的分支，使用`git checkout -b branch-name origin/branch-name`，本地和远程分支的名称最好一致；
+- 建立本地分支和远程分支的关联，使用`git branch --set-upstream branch-name origin/branch-name`；
+- 从远程抓取分支，使用`git pull`，如果有冲突，要先处理冲突。
+
 
 
