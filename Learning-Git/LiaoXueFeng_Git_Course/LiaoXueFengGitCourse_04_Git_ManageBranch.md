@@ -779,3 +779,192 @@ To github.com:michaelliao/learngit.git
 
 
 
+
+
+#### [Rebase](https://www.liaoxuefeng.com/wiki/896043488029600/1216289527823648)
+
+`git rebase`把分叉的提交历史"整理"成一条直线, 看上去更直观, 缺点是本地的分叉提交已经被修改过了. 
+
+##### 小结
+
+- rebase操作可以把本地未push的分叉提交历史整理成直线；
+- rebase的目的是使得我们在查看历史提交的变化时更容易，因为分叉的提交需要三方对比。
+
+
+
+#### [标签管理](https://www.liaoxuefeng.com/wiki/896043488029600/900788941487552)
+
+发布一个版本时，我们通常先在版本库中打一个标签（tag），这样，就唯一确定了打标签时刻的版本。将来无论什么时候，取某个标签的版本，就是把那个打标签的时刻的历史版本取出来。所以，标签也是版本库的一个快照。
+
+Git的标签虽然是版本库的快照，但其实它就是指向某个commit的指针（跟分支很像对不对？但是分支可以移动，标签不能移动），所以，创建和删除标签都是瞬间完成的。
+
+Git有commit，为什么还要引入tag？
+
+“请把上周一的那个版本打包发布，commit号是6a5819e...”
+
+“一串乱七八糟的数字不好找！”
+
+如果换一个办法：
+
+“请把上周一的那个版本打包发布，版本号是v1.2”
+
+“好的，按照tag v1.2查找commit就行！”
+
+所以，tag就是一个让人容易记住的有意义的名字，它跟某个commit绑在一起。
+
+
+
+##### [创建标签](https://www.liaoxuefeng.com/wiki/896043488029600/902335212905824)
+
+首先切到需要打标签的分支上: 
+
+```shell
+$ git branch
+* dev
+  master
+$ git checkout master
+```
+
+然后使用命令`git tag <name>`就可以打一个标签: 
+
+```shell
+$ git tag v1.0
+```
+
+可以使用命令`git tag`查看所有标签: 
+
+```shell
+$ git tag
+v1.0
+```
+
+默认标签打在最新提交的commit上. 
+
+
+
+如果想打在以前的commit上, 方法是找到历史提交的commit id, 然后打上标签就可以了: 
+
+```shell
+$ git log --pretty=oneline --abbrev-commit
+12a631b (HEAD -> master, tag: v1.0, origin/master) merged bug fix 101
+4c805e2 fix bug 101
+e1e9c68 merge with no-ff
+f52c633 add merge
+cf810e4 conflict fixed
+5dc6824 & simple
+14096d0 AND simple
+b17d20e branch test
+d46f35e remove test.txt
+b84166e add test.txt
+519219b git tracks changes
+e43a48b understand how stage works
+1094adb append GPL
+e475afc add distributed
+eaadf4e wrote a readme file
+```
+
+对`f52c633`打上标签: 
+
+```shell
+$ git tag v0.9 f52c633
+```
+
+再用命令`git tag`查看标签：
+
+```shell
+$ git tag
+v0.9
+v1.0
+```
+
+标签按字母排序, 不是按时间顺序列出. 
+
+
+
+用`git show <tagname>`查看标签信息: 
+
+```shell
+$ git show v0.9
+commit f52c63349bc3c1593499807e5c8e972b82c8f286 (tag: v0.9)
+Author: Michael Liao <askxuefeng@gmail.com>
+Date:   Fri May 18 21:56:54 2018 +0800
+
+    add merge
+
+diff --git a/readme.txt b/readme.txt
+...
+```
+
+
+
+可以创建带有标签说明的标签, `-a`指定标签名, `-m`指定说明文字: 
+
+```shell
+$ git tag -a v0.1 -m "version 0.1 released" 1094adb
+```
+
+依旧使用`git show <tagname>`查看说明文字. 
+
+
+
+###### 小结
+
+- 命令`git tag `用于新建一个标签，默认为`HEAD`，也可以指定一个commit id；
+- 命令`git tag -a  -m "blablabla..."`可以指定标签信息；
+- 命令`git tag`可以查看所有标签。
+
+
+
+##### [操作标签](https://www.liaoxuefeng.com/wiki/896043488029600/902335479936480)
+
+删除标签: 
+
+```shell
+$ git tag -d v0.1
+```
+
+因为创建的标签都只存储在本地，不会自动推送到远程。所以，打错的标签可以在本地安全删除。
+
+
+
+如果要推送某个标签到远程，使用命令`git push origin `：
+
+```powershell
+$ git push origin v1.0
+Total 0 (delta 0), reused 0 (delta 0)
+To github.com:michaelliao/learngit.git
+ * [new tag]         v1.0 -> v1.0
+```
+
+或者，一次性推送全部尚未推送到远程的本地标签：
+
+```shell
+$ git push origin --tags
+Total 0 (delta 0), reused 0 (delta 0)
+To github.com:michaelliao/learngit.git
+ * [new tag]         v0.9 -> v0.9
+```
+
+如果标签已经推送到远程，要删除远程标签就麻烦一点，先从本地删除：
+
+```shell
+$ git tag -d v0.9
+Deleted tag 'v0.9' (was f52c633)
+```
+
+然后，从远程删除。删除命令也是push，但是格式如下：
+
+```shell
+$ git push origin :refs/tags/v0.9
+To github.com:michaelliao/learngit.git
+ - [deleted]         v0.9
+```
+
+
+
+###### 小结
+
+- 命令`git push origin `可以推送一个本地标签；
+- 命令`git push origin --tags`可以推送全部未推送过的本地标签；
+- 命令`git tag -d `可以删除一个本地标签；
+- 命令`git push origin :refs/tags/`可以删除一个远程标签。
